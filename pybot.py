@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
+import config
 import random
-
 from ipwhois import IPWhois
 import json
 import datetime
-
-import config
+import codecs
 
 def get_uptime():
     with open('/proc/uptime', 'r') as f:
@@ -82,5 +81,30 @@ async def xmas(ctx):
 @bot.command()
 async def hello(ctx):
     await ctx.send("Hello %s!" % ctx.message.author.mention)
+
+@bot.command()
+async def mball(ctx):
+    answers = ['It is certain', 'It is decidedly so', 'Without a doubt', \
+        'Yes - definitely', 'You may rely on it', 'As I see it, yes',\
+        'Most likely', 'Outlook good', 'Signs point to yes', 'Yes', \
+        'Reply hazy, try again', 'Ask again later', 'Better not tell you now', \
+        'Cannot predict now', 'Concentrate and ask again', 'Don\'t count on it', \
+        'My reply is no', 'My sources say no', 'Outlook not so good', \
+        'Very doubtful'
+    ]
+    random.shuffle(answers)
+    response = 'Magic Ball says: ' + random.choice(answers)
+    await ctx.send(response)
+
+@bot.command()
+async def rot13decode(ctx, *, args):
+    text = codecs.decode(args, 'rot_13')
+    await ctx.send('Plaintext of rot13 "%s" is: %s' % (args, text))
+
+@bot.command()
+async def rot13encode(ctx, *, args):
+    rot13 = codecs.encode(args, 'rot_13')
+    await ctx.send('Rot13 of "%s" is: %s' % (args, rot13))
+
 
 bot.run(config.token)
