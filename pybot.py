@@ -106,5 +106,9 @@ async def rot13encode(ctx, *, args):
     rot13 = codecs.encode(args, 'rot_13')
     await ctx.send('Rot13 of "%s" is: %s' % (args, rot13))
 
+@bot.command()
+async def avatar(ctx, *,  avamember : discord.Member=None):
+    userAvatarUrl = avamember.avatar.url
+    await ctx.send(userAvatarUrl)
 
 bot.run(config.token)
