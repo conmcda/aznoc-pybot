@@ -14,11 +14,11 @@ Some of the features include:
 
 - ?avatar <username> - Discord avatar viewer
 
-- ?url2img <url> - URL to Discord image
+- ?url2img <url> - URL to discord image
 
 - ?yt2mp3 <url> - Downloads an MP3 from youtube and embeds into discord
 
-- ?playmp3 <filename> - plays an mp3 previously downloaded
+- ?playmp3 <filename> - Plays an mp3 on voice channels previously downloaded
 
 
 
