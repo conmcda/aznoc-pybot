@@ -6,7 +6,7 @@ This is a simple discord bot I wrote in python. It's easy to setup and configure
 
 Some of the features include:
 
-- ?uptime System uptime command
+- ?uptime - System uptime command
 
 - ?ipinfo - IP Information command
 
