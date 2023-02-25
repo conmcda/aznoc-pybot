@@ -26,8 +26,8 @@ Some of the features include:
 
 ```bash
 sudo apt install ffmpeg
-pip install -r requirements.txt
-pip install git+https://github.com/ImNimboss/dshell
+pip3 install -r requirements.txt
+pip3 install git+https://github.com/ImNimboss/dshell
 git clone https://github.com/azn0c/aznoc-pybot.git
 #edit config.py with your token and channel + user ids
 python3 pybot.py
