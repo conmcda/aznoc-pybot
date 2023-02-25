@@ -2,55 +2,24 @@ import discord
 from discord.ext import commands
 from discord import FFmpegPCMAudio
 from discord.utils import get
-
-
+from threading import Thread
 from asyncio import run
 
-import config
-import random
-from ipwhois import IPWhois
-import json
 import datetime
+import random
+import json
 import codecs
-from yt2mp3 import download
+from ipwhois import IPWhois
 from io import BytesIO
 
+import config
+from misc.misc import *
+from misc.yt2mp3 import download
 
-def get_uptime():
-    with open('/proc/uptime', 'r') as f:
-        uptime_seconds = float(f.readline().split()[0])
-        uptime = secondsToText(uptime_seconds)
-
-    return uptime
-
-def secondsToText(secs):
-    days = secs//86400
-    hours = (secs - days*86400)//3600
-    minutes = (secs - days*86400 - hours*3600)//60
-    seconds = secs - days*86400 - hours*3600 - minutes*60
-    result = ("{} days, ".format(int(days)) if days else "") + \
-    ("{} hours, ".format(int(hours)) if hours else "") + \
-    ("{} minutes, ".format(int(minutes)) if minutes else "") + \
-    ("{} seconds, ".format(int(seconds)) if seconds else "")
-    return result
-
-def get_christmas(date):
-    """Returns the date of the Christmas of the year of the date"""
-    next_xmas = datetime.datetime(date.year, 12, 25)
-    if next_xmas < date:
-        next_xmas = datetime.datetime(date.year+1, 12, 25)
-    return next_xmas
-
-def days_to_xmas(input_date):
-    ans = (get_christmas(input_date) - input_date).days
-    return ans
-
-description = 'pybot'
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-owners = [1076273465906167878, 591770524380692511, 1076273476979150998]
-bot = commands.Bot(command_prefix='?', owner_ids = set(owners), description=description, intents=intents)
+bot = commands.Bot(command_prefix='?', owner_ids = set(config.shell_users), description=config.bot_description, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -129,16 +98,20 @@ async def url2img(ctx, *,  url : str):
             with io.BytesIO(img) as file: # converts to file-like object
                 await channel.send(file=discord.File(file, "testimage.png"))
 
-@bot.command()
-async def yt2mp3(ctx, *,  url : str):
-    await ctx.send("Downloading video and converting to mp3...")
+def ytdl(ctx, url):
     ytdl = download(url)
     file = ytdl[0]
     title = ytdl[1]
     ytid = ytdl[2]
     with open(file, "rb") as fh:
         buf = BytesIO(fh.read())
-        await ctx.send("Filename is %s.mp3" %(ytid), file=discord.File(buf, title+'.mp3'))
+        bot.loop.create_task(ctx.send("Filename is %s.mp3" %(ytid), file=discord.File(buf, title+'.mp3')))
+
+@bot.command()
+async def yt2mp3(ctx, *,  url : str):
+    await ctx.send("Downloading video and converting to mp3...")
+    background_thread = Thread(target=ytdl, args=(ctx,url,))
+    background_thread.start()
 
 @bot.command()
 async def playmp3(ctx, *, file : str):
@@ -165,12 +138,13 @@ async def stopmp3(ctx):
     if voice and voice.is_connected():
         await ctx.send("Stopped mp3 playback.")
         voice.stop()
-    
 
+@bot.command()
+async def disconnect(ctx):
+    await ctx.voice_client.disconnect()
 
+run(bot.load_extension('dshell'))
+bot.dshell_config['shell_channels'] = config.shell_channels # put your own channel IDs here. all the channels that you've put will become shell channels
+bot.dshell_config['give_clear_command_confirmation_warning'] = False
 
-#run(bot.load_extension('dshell'))
-#bot.dshell_config['shell_channels'] = [1077653766821662740] # put your own channel IDs here. all the channels that you've put will become shell channels
-#bot.dshell_config['give_clear_command_confirmation_warning'] = False
-
-bot.run(config.token)
+bot.run(config.bot_token)
