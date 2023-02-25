@@ -32,4 +32,4 @@ def download(url: str) -> str:
     else:
         dloader
     xyz = path.join("downloads", f"{info['id']}.mp3")
-    return xyz, info['title']
+    return xyz, info['title'], info['id']

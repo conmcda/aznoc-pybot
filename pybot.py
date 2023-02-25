@@ -1,5 +1,9 @@
 import discord
 from discord.ext import commands
+from discord import FFmpegPCMAudio
+from discord.utils import get
+
+
 from asyncio import run
 
 import config
@@ -127,21 +131,46 @@ async def url2img(ctx, *,  url : str):
 
 @bot.command()
 async def yt2mp3(ctx, *,  url : str):
+    await ctx.send("Downloading video and converting to mp3...")
     ytdl = download(url)
     file = ytdl[0]
     title = ytdl[1]
+    ytid = ytdl[2]
     with open(file, "rb") as fh:
         buf = BytesIO(fh.read())
-        await ctx.send(file=discord.File(buf, title+'.mp3'))
+        await ctx.send("Filename is %s.mp3" %(ytid), file=discord.File(buf, title+'.mp3'))
+
+@bot.command()
+async def playmp3(ctx, *, file : str):
+    channel = ctx.message.author.voice.channel
+    if not channel:
+        await ctx.send("You are not connected to a voice channel")
+        return
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+    source = FFmpegPCMAudio('downloads/'+file)
+    voice.stop()
+    player = voice.play(source)  
+
+@bot.command()
+async def stopmp3(ctx):
+    channel = ctx.message.author.voice.channel
+    if not channel:
+        await ctx.send("You are not connected to a voice channel")
+        return
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await ctx.send("Stopped mp3 playback.")
+        voice.stop()
+    
 
 
 
+#run(bot.load_extension('dshell'))
+#bot.dshell_config['shell_channels'] = [1077653766821662740] # put your own channel IDs here. all the channels that you've put will become shell channels
+#bot.dshell_config['give_clear_command_confirmation_warning'] = False
 
-run(bot.load_extension('dshell'))
-
-
-bot.dshell_config['shell_channels'] = [1077653766821662740] # put your own channel IDs here. all the channels that you've put will become shell channels
-bot.dshell_config['give_clear_command_confirmation_warning'] = False
 bot.run(config.token)
-
-
