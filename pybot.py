@@ -1,11 +1,16 @@
 import discord
 from discord.ext import commands
+from asyncio import run
+
 import config
 import random
 from ipwhois import IPWhois
 import json
 import datetime
 import codecs
+from yt2mp3 import download
+from io import BytesIO
+
 
 def get_uptime():
     with open('/proc/uptime', 'r') as f:
@@ -40,7 +45,8 @@ description = 'pybot'
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix='?', description=description, intents=intents)
+owners = [1076273465906167878, 591770524380692511, 1076273476979150998]
+bot = commands.Bot(command_prefix='?', owner_ids = set(owners), description=description, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -111,4 +117,31 @@ async def avatar(ctx, *,  avamember : discord.Member=None):
     userAvatarUrl = avamember.avatar.url
     await ctx.send(userAvatarUrl)
 
+@bot.command()
+async def url2img(ctx, *,  url : str):
+    async with aiohttp.ClientSession() as session: # creates session
+        async with session.get(url) as resp: # gets image from url
+            img = await resp.read() # reads image from response
+            with io.BytesIO(img) as file: # converts to file-like object
+                await channel.send(file=discord.File(file, "testimage.png"))
+
+@bot.command()
+async def yt2mp3(ctx, *,  url : str):
+    ytdl = download(url)
+    file = ytdl[0]
+    title = ytdl[1]
+    with open(file, "rb") as fh:
+        buf = BytesIO(fh.read())
+        await ctx.send(file=discord.File(buf, title+'.mp3'))
+
+
+
+
+run(bot.load_extension('dshell'))
+
+
+bot.dshell_config['shell_channels'] = [1077653766821662740] # put your own channel IDs here. all the channels that you've put will become shell channels
+bot.dshell_config['give_clear_command_confirmation_warning'] = False
 bot.run(config.token)
+
+
