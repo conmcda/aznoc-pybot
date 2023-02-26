@@ -12,13 +12,13 @@ Some of the features include:
 
 - ?xmas - Displays number of days until Christmas day
 
-- ?avatar <username> - Discord avatar viewer
+- ?avatar &lt;username&gt; - Discord avatar viewer
 
-- ?url2img <url> - URL to discord image
+- ?url2img &lt;url&gt; - URL to discord image
 
-- ?yt2mp3 <url> - Downloads an MP3 from youtube and embeds into discord
+- ?yt2mp3 &lt;url&gt; - Downloads an MP3 from youtube and embeds into discord
 
-- ?playmp3 <filename> - Plays an mp3 on voice channels previously downloaded
+- ?playmp3 &lt;filename&gt; - Plays an mp3 on voice channels previously downloaded
 
 
 
