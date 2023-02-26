@@ -29,7 +29,7 @@ bot = commands.Bot(command_prefix='?', owner_ids = set(config.shell_users), desc
 
 def webserver():
     print("Serving webserver on port %s with directory %s" % (config.web_port, config.web_directory))
-    httpd = HTTPServer(('localhost', config.web_port), server)  
+    httpd = HTTPServer(('0.0.0.0', config.web_port), server)  
     httpd.serve_forever()
 
 @bot.event
