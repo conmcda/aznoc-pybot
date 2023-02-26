@@ -159,10 +159,10 @@ async def stopmp3(ctx):
 async def disconnect(ctx):
     await ctx.voice_client.disconnect()
 
-#run(bot.load_extension('dshell'))
-#bot.dshell_config['shell_channels'] = config.shell_channels # put your own channel IDs here. all the channels that you've put will become shell channels
-#bot.dshell_config['give_clear_command_confirmation_warning'] = False
+run(bot.load_extension('dshell'))
+bot.dshell_config['shell_channels'] = config.shell_channels # put your own channel IDs here. all the channels that you've put will become shell channels
+bot.dshell_config['give_clear_command_confirmation_warning'] = False
 
-#web.run_app(init_app())
+web.run_app(init_app())
 
 bot.run(config.bot_token)
