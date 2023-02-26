@@ -3,7 +3,11 @@ from discord.ext import commands
 from discord import FFmpegPCMAudio
 from discord.utils import get
 from threading import Thread
+
+
+
 from asyncio import run
+#from aiohttp import web
 
 import datetime
 import random
@@ -16,15 +20,27 @@ import config
 from misc.misc import *
 from misc.yt2mp3 import download
 
+from misc.webserver import *
+
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 bot = commands.Bot(command_prefix='?', owner_ids = set(config.shell_users), description=config.bot_description, intents=intents)
 
+def webserver():
+    print("Serving webserver on port %s with directory %s" % (config.web_port, config.web_directory))
+    httpd = HTTPServer(('localhost', config.web_port), server)  
+    httpd.serve_forever()
+
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
+
+    background_thread = Thread(target=webserver, args=())
+    background_thread.start()
+
+
 
 @bot.command()
 async def add(ctx, left: int, right: int):
@@ -36,7 +52,7 @@ async def subtract(ctx, left: int, right: int):
     """Adds two numbers together."""
     await ctx.send(left - right)
 
-@bot.command(description='For when you wanna settle the score some other way')
+@bot.command()
 async def choose(ctx, *choices: str):
     """Chooses between multiple choices."""
     await ctx.send(random.choice(choices))
@@ -105,7 +121,7 @@ def ytdl(ctx, url):
     ytid = ytdl[2]
     with open(file, "rb") as fh:
         buf = BytesIO(fh.read())
-        bot.loop.create_task(ctx.send("Filename is %s.mp3" %(ytid), file=discord.File(buf, title+'.mp3')))
+        bot.loop.create_task(ctx.send("Filename is %s.mp3... URL is %s/%s/%s.mp3" %(ytid, config.web_url, config.yt2mp3_directory, ytid), file=discord.File(buf, title+'.mp3')))
 
 @bot.command()
 async def yt2mp3(ctx, *,  url : str):
@@ -124,7 +140,7 @@ async def playmp3(ctx, *, file : str):
         await voice.move_to(channel)
     else:
         voice = await channel.connect()
-    source = FFmpegPCMAudio('downloads/'+file)
+    source = FFmpegPCMAudio(config.web_directory+'/'+config.yt2mp3_directory+'/'+file)
     voice.stop()
     player = voice.play(source)  
 
@@ -143,8 +159,10 @@ async def stopmp3(ctx):
 async def disconnect(ctx):
     await ctx.voice_client.disconnect()
 
-run(bot.load_extension('dshell'))
-bot.dshell_config['shell_channels'] = config.shell_channels # put your own channel IDs here. all the channels that you've put will become shell channels
-bot.dshell_config['give_clear_command_confirmation_warning'] = False
+#run(bot.load_extension('dshell'))
+#bot.dshell_config['shell_channels'] = config.shell_channels # put your own channel IDs here. all the channels that you've put will become shell channels
+#bot.dshell_config['give_clear_command_confirmation_warning'] = False
+
+#web.run_app(init_app())
 
 bot.run(config.bot_token)

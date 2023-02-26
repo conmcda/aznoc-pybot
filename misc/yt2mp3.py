@@ -1,6 +1,7 @@
 from os import path
 import yt_dlp
 from yt_dlp.utils import DownloadError
+import config
 
 ytdl = yt_dlp.YoutubeDL()
 
@@ -8,7 +9,7 @@ ytdl = yt_dlp.YoutubeDL()
 def download(url: str) -> str:
     ydl_optssx = {
         'restrict_filenames': True,
-        "outtmpl": "downloads/%(id)s.%(ext)s",
+        "outtmpl": config.web_directory + '/' + config.yt2mp3_directory + "/%(id)s.%(ext)s",
         "geo_bypass": True,
         "nocheckcertificate": True,
         "quiet": True,
@@ -31,5 +32,5 @@ def download(url: str) -> str:
         return print(y_e)
     else:
         dloader
-    xyz = path.join("downloads", f"{info['id']}.mp3")
+    xyz = config.web_directory + '/' + config.yt2mp3_directory + '/' + info['id'] + '.mp3'
     return xyz, info['title'], info['id']
