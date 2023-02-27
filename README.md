@@ -2,9 +2,9 @@
 
 This is a simple discord bot I wrote in python. It's easy to setup and configure.
 
-
-
 Some of the features include:
+
+- Bash shell discord channels (implemented using dshell)
 
 - ?uptime - System uptime command
 
@@ -19,8 +19,6 @@ Some of the features include:
 - ?yt2mp3 &lt;url&gt; - Downloads an MP3 from youtube and embeds into discord
 
 - ?playmp3 &lt;filename&gt; - Plays an mp3 on voice channels previously downloaded
-
-
 
 # How to install
 
