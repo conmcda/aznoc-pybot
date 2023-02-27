@@ -4,7 +4,7 @@ from discord import FFmpegPCMAudio
 from discord.utils import get
 from threading import Thread
 
-
+import socket
 
 from asyncio import run
 #from aiohttp import web
@@ -62,6 +62,11 @@ async def ipwhois(ctx, ip: str):
     obj = IPWhois(ip)
     results = json.dumps(obj.lookup_whois(), indent=4)
     await ctx.send(results)
+
+@bot.command()
+async def dns(ctx, ip: str):
+    data = socket.gethostbyname_ex(ip)
+    await ctx.send(repr(data))
 
 @bot.command()
 async def uptime(ctx):
