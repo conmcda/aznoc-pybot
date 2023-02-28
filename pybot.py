@@ -9,7 +9,9 @@ import socket
 from asyncio import run
 #from aiohttp import web
 
-import datetime
+from datetime import datetime
+import time
+
 import random
 import json
 import codecs
@@ -21,6 +23,17 @@ from misc.misc import *
 from misc.yt2mp3 import download
 
 from misc.webserver import *
+
+
+scriptstart=time.time()
+print("Script started at %s" % (scriptstart))
+botinfo = {}
+botinfo['scriptstart'] = scriptstart
+
+jsonfile = 'botinfo.json'
+
+with open(jsonfile, 'w') as f:
+    json.dump(botinfo, f)
 
 intents = discord.Intents.default()
 intents.members = True
