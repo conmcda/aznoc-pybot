@@ -132,6 +132,11 @@ async def url2img(ctx, *,  url : str):
             with io.BytesIO(img) as file: # converts to file-like object
                 await channel.send(file=discord.File(file, "testimage.png"))
 
+@bot.command()
+async def userid(ctx):
+    await ctx.send(ctx.author.id)
+
+
 def ytdl(ctx, url):
     ytdl = download(url)
     file = ytdl[0]
